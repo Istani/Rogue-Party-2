@@ -1,0 +1,102 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Enemy : MonoBehaviour
+{
+    public GameObject Player1;
+    public GameObject Player2;
+    public int goalDamage = 10;
+    private bool isMove;
+    public Vector3 startPoint = new Vector3(0, 1.25f, 0);
+    private CharacterController characterController;
+    Vector3 directionVec = Vector3.zero;
+    float ballspeed = 0;
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        characterController = GetComponent<CharacterController>();
+        transform.position = startPoint;
+        isMove = true;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if(isMove ==true)
+        {
+        characterController.Move(Movement() * Time.deltaTime);
+        }
+        else if(isMove ==false)
+        {
+            transform.position = startPoint;
+            
+        }
+        
+    }
+
+    Vector3 Movement()
+    {
+        Vector3 moveVector = Vector3.zero;
+        moveVector = directionVec * ballspeed;
+        return moveVector;
+    }
+    public void TakeDamage(int damage, Vector3 direction)
+    {
+        isMove = true;
+        ballspeed = damage ;
+        directionVec = direction + AddNoiseOnAngle(0, 15); ; //achse?
+    }
+
+    private void OnCollisionEnter(Collision collisionInfo)
+    {
+        string collideto =collisionInfo.collider.tag;
+        Debug.Log("hit" + collideto );
+        
+        if (collideto == "PongVerWall") 
+        {
+            directionVec = new Vector3(directionVec[0] * (-1), 0, directionVec[2]);
+            if(ballspeed > 1)
+            {
+                ballspeed -= 1;
+            }
+            
+        }
+        if (collideto == "PongHorWall")
+        {
+            directionVec = new Vector3(directionVec[0], 0, directionVec[2] * (-1));
+            if (ballspeed > 1)
+            {
+                ballspeed -= 1;
+            }
+        }
+        if (collideto == "GoalP1")
+        {
+            isMove = false;
+            Debug.Log("TOOOOOOR");
+            Player1.GetComponent<CharMove>().GetDamage(goalDamage);
+        }
+        if (collideto == "GoalP2")
+        {
+            isMove = false;
+            Debug.Log("TOOOOOOR");
+            Player2.GetComponent<CharMove>().GetDamage(goalDamage);
+        }
+        //directionVec = directionVec * (-1);
+    }
+    Vector3 AddNoiseOnAngle(float min, float max)
+    {
+        // Find random angle between min & max inclusive
+        float xNoise = Random.Range(min, max);
+        float zNoise = Random.Range(min, max);
+
+        // Convert Angle to Vector3
+        Vector3 noise = new Vector3(
+          Mathf.Sin(2 * Mathf.PI * xNoise / 360),
+          0,
+          Mathf.Sin(2 * Mathf.PI * zNoise / 360)
+        );
+        return noise;
+    }
+}
