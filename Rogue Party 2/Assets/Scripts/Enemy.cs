@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+    public int enemyType;
     public GameObject Player1;
     public GameObject Player2;
     public int goalDamage = 10;
@@ -12,7 +13,6 @@ public class Enemy : MonoBehaviour
     private CharacterController characterController;
     Vector3 directionVec = Vector3.zero;
     float ballspeed = 0;
-
     // Start is called before the first frame update
     void Start()
     {
@@ -44,9 +44,31 @@ public class Enemy : MonoBehaviour
     }
     public void TakeDamage(int damage, Vector3 direction)
     {
+        if(enemyType == 0)
+        {
+            pongDamage(damage, direction);
+        }
+
+        if(enemyType == 1)
+        {
+            llDamage(damage, direction);
+        }
+
+        
+    }
+
+    private void pongDamage(int damage, Vector3 direction) 
+    {
         isMove = true;
-        ballspeed = damage ;
-        directionVec = direction + AddNoiseOnAngle(0, 15); ; //achse?
+        ballspeed = damage;
+        directionVec = direction + AddNoiseOnAngle(0, 15); //achse?
+    }
+
+    private void llDamage(int damage, Vector3 direction)
+    {
+        isMove = true;
+        ballspeed = ballspeed + (0.01f * damage);
+        directionVec = new Vector3(direction.x, AddNoiseOnAngle(0, 30).x, 0);
     }
 
     private void OnCollisionEnter(Collision collisionInfo)
@@ -83,6 +105,18 @@ public class Enemy : MonoBehaviour
             Debug.Log("TOOOOOOR");
             Player2.GetComponent<CharMove>().GetDamage(goalDamage);
         }
+
+        if (collideto == "LLWallVer")
+        {
+            directionVec = new Vector3(directionVec[0] * (-1), directionVec[1] + AddNoiseOnAngle(0, 15).x, 0);
+
+        }
+        if(collideto == "LLWallHor")
+        {
+            directionVec = new Vector3(directionVec[0] + AddNoiseOnAngle(0, 15).x, directionVec[1] * (-1), 0);
+
+        }
+
         //directionVec = directionVec * (-1);
     }
     Vector3 AddNoiseOnAngle(float min, float max)

@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 
 public class CharMove : MonoBehaviour
 {
+    public bool isSideScroll;
     public Image healtBar;
     public bool isDead;
 
@@ -98,7 +99,11 @@ public class CharMove : MonoBehaviour
         {
             return moveVector;
         }
-        moveVector += Vector3.forward * movementInput.y;
+        if (isSideScroll == false)
+        {
+            moveVector += Vector3.forward * movementInput.y;
+        }
+        
         moveVector += Vector3.right * movementInput.x;
         moveVector = Vector3.ClampMagnitude(moveVector, 1f);
         moveVector *= speed;
@@ -150,6 +155,7 @@ public class CharMove : MonoBehaviour
         foreach(Collider enemy in hitEnemies)
         {
             enemy.GetComponent<Enemy>().TakeDamage(attackDamage, transform.forward);
+            
         }
     }
 

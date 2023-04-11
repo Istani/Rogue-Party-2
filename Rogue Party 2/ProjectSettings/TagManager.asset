@@ -8,6 +8,12 @@ TagManager:
   - PongHorWall
   - GoalP1
   - GoalP2
+  - GoalP2
+  - GoalP2
+  - LLWallVer
+  - LLWallHor
+  - GoalP2
+  - GoalP2
   layers:
   - Default
   - TransparentFX
