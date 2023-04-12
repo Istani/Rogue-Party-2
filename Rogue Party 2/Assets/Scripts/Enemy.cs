@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+    public int PlayerNum = 5;
     public int enemyType;
     public GameObject Player1;
     public GameObject Player2;
@@ -42,7 +43,7 @@ public class Enemy : MonoBehaviour
         moveVector = directionVec * ballspeed;
         return moveVector;
     }
-    public void TakeDamage(int damage, Vector3 direction)
+    public void TakeDamage(int damage, Vector3 direction, int PlayerNumber)
     {
         if(enemyType == 0)
         {
@@ -52,6 +53,7 @@ public class Enemy : MonoBehaviour
         if(enemyType == 1)
         {
             llDamage(damage, direction);
+            PlayerNum = PlayerNumber;
         }
 
         
@@ -115,6 +117,13 @@ public class Enemy : MonoBehaviour
         {
             directionVec = new Vector3(directionVec[0] + AddNoiseOnAngle(0, 15).x, directionVec[1] * (-1), 0);
 
+        }
+
+        if(enemyType == 1 && collideto == "Player" && collisionInfo.collider.GetComponent<CharMove>().PlayerID != PlayerNum && collisionInfo.collider.GetComponent<CharMove>().isDead == false)
+        {
+            isMove = false;
+            collisionInfo.collider.GetComponent<CharMove>().GetDamage((int)ballspeed);
+            ballspeed = 0;
         }
 
         //directionVec = directionVec * (-1);

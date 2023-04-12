@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 
 public class CharMove : MonoBehaviour
 {
+    public int PlayerID;
     public bool isSideScroll;
     public Image healtBar;
     public bool isDead;
@@ -32,6 +33,7 @@ public class CharMove : MonoBehaviour
     private Vector2 movementInput = Vector2.zero;
     private bool jumped = false;
     private bool attacked = false;
+    
 
     // Start is called before the first frame update
     void Start()
@@ -68,7 +70,7 @@ public class CharMove : MonoBehaviour
         //Jump
         if (jumped && characterController.isGrounded)
         {
-            currentGravity -= jumppower;
+            Jump();
         }
     }
 
@@ -88,6 +90,14 @@ public class CharMove : MonoBehaviour
         }
 
         return gravityMovement;
+    }
+    void Jump()
+    {
+        if (isDead == true)
+        {
+            return;
+        }
+        currentGravity -= jumppower;
     }
     Vector3 Movement()
     {
@@ -146,6 +156,7 @@ public class CharMove : MonoBehaviour
             return;
         }
 
+        
         //animation
         animator.SetTrigger("isAttacking2");
 
@@ -154,7 +165,7 @@ public class CharMove : MonoBehaviour
 
         foreach(Collider enemy in hitEnemies)
         {
-            enemy.GetComponent<Enemy>().TakeDamage(attackDamage, transform.forward);
+            enemy.GetComponent<Enemy>().TakeDamage(attackDamage, transform.forward, PlayerID);
             
         }
     }
